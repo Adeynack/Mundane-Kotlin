@@ -1,0 +1,65 @@
+buildscript {
+
+    ext.kotlin_version = '1.1.2'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M3'
+        // Upgrade to M4 once https://github.com/JetBrains/spek/issues/195 is fixed and released.
+
+    }
+}
+
+apply plugin: 'java'
+apply plugin: "kotlin"
+apply plugin: 'idea'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+group 'com.github.adeynack'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "http://dl.bintray.com/jetbrains/spek" }
+}
+
+configurations {
+    ktlint
+}
+
+dependencies {
+
+    compile fileTree(dir: '/Applications/Moneydance.app/Contents/Java', include: '*.jar')
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+
+    testCompile 'org.mockito:mockito-core:2.7.22'
+    testCompile 'org.amshove.kluent:kluent:1.19'
+    testCompile "org.junit.platform:junit-platform-console:1.0.0-M3"
+    testCompile('org.jetbrains.spek:spek-api:1.1.0') {
+        exclude group: 'org.jetbrains.kotlin'
+    }
+    testRuntime('org.jetbrains.spek:spek-junit-platform-engine:1.1.0') {
+        exclude group: 'org.junit.platform'
+        exclude group: 'org.jetbrains.kotlin'
+    }
+
+    ktlint 'com.github.shyiko:ktlint:0.6.1'
+
+}
+
+junitPlatform {
+    platformVersion '1.0.0-M3'
+    filters {
+        engines {
+            include 'spek'
+        }
+    }
+}

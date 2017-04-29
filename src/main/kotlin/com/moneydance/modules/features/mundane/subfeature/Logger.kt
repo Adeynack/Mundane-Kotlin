@@ -1,4 +1,4 @@
-package com.moneydance.modules.kotlinmd
+package com.moneydance.modules.features.mundane.subfeature
 
 interface Logger {
 

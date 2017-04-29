@@ -1,6 +1,7 @@
-package com.moneydance.modules.kotlinmd
+package com.moneydance.modules.features.mundane.subfeature
 
 import com.infinitekind.moneydance.model.LocalStorage
+import com.moneydance.modules.features.mundane.subfeature.SubFeatureContext
 
 interface Storage<T> {
 
