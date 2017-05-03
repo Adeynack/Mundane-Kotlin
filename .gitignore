@@ -3,3 +3,6 @@
 out
 .gradle
 build
+moneydance-devkit-*
+priv_key
+pub_key

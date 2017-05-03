@@ -7,9 +7,11 @@ buildscript {
     }
 
     dependencies {
+
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // Upgrade junit-platform-gradle-plugin to M4 once https://github.com/JetBrains/spek/issues/195 is fixed and released.
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M3'
-        // Upgrade to M4 once https://github.com/JetBrains/spek/issues/195 is fixed and released.
 
     }
 }
@@ -24,6 +26,13 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+// Get the installed Moneydance's classpath from the MONEYDANCE_CLASSPATH environment variable or
+// default to the Mac default installed path if the environment variable does not exist.
+String moneydanceInstalled = System.getenv()["MONEYDANCE_CLASSPATH"]
+if (moneydanceInstalled == null || moneydanceInstalled.length() == 0) {
+    moneydanceInstalled = "/Applications/Moneydance.app/Contents/Java"
+}
+
 repositories {
     mavenCentral()
     jcenter()
@@ -36,9 +45,12 @@ configurations {
 
 dependencies {
 
-    compile fileTree(dir: '/Applications/Moneydance.app/Contents/Java', include: '*.jar')
+    compileOnly fileTree(dir: moneydanceInstalled, include: '*.jar')
+    compileOnly fileTree(dir: "moneydance-devkit-4.0/lib", include: 'extadmin.jar')
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile "com.miglayout:miglayout-swing:5.0"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.8.1"
 
     testCompile 'org.mockito:mockito-core:2.7.22'
     testCompile 'org.amshove.kluent:kluent:1.19'
@@ -61,5 +73,52 @@ junitPlatform {
         engines {
             include 'spek'
         }
+    }
+}
+
+jar {
+    description 'Assembles a jar archive containing the main classes INCLUDING all dependencies (Fat JAR)'
+    archiveName = 'mundane.jar'
+    from {
+        configurations.compile
+                .filter { it.name != "MoneydanceInstalled" }
+                .collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task genkeys(type: JavaExec) {
+    description 'Generates the key files necessary for Moneydance Admin JAR to sign the extension.'
+    classpath = compileJava.classpath
+    main = "com.moneydance.admin.KeyAdmin"
+    args = [
+            "genkey",
+            "priv_key",
+            "pub_key"
+    ]
+    standardInput = System.in
+}
+
+task mxt(type: JavaExec) {
+    description 'Signs the extension and places the result in "out/"'
+    dependsOn jar
+    classpath = compileJava.classpath
+    main = "com.moneydance.admin.KeyAdmin"
+    args = [
+            "signextjar",
+            "priv_key",
+            "99",
+            "mundane",
+            "${jar.destinationDir}/${jar.archiveName}"
+    ]
+    standardInput = System.in
+    doLast {
+        String signedArchiveName = jar.archiveName.replace(".jar", ".mxt")
+        println("Signed archive name = s-$signedArchiveName")
+        copy {
+            from "s-$signedArchiveName"
+            into "out"
+            rename "s-$signedArchiveName", "$signedArchiveName"
+        }
+        delete "s-$signedArchiveName"
     }
 }

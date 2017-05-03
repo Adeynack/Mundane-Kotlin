@@ -1,0 +1,9 @@
+{
+  "vendor" = "Adeynack"
+  "module_build" = "1"
+  "minbuild" = "1000"
+  "vendor.url" = "https://github.com/Adeynack/Mundane"
+  "module_name" = "Mundane"
+  "module_desc" = "<html><body><title>Mundane</title><p>A collection of add-ons to Moneydance packaged in one extension.</p></body></html>"
+  "desc" = "A collection of add-ons to Moneydance packaged in one extension."
+}
