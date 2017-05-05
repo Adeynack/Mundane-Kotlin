@@ -1,10 +1,13 @@
 package com.moneydance.modules.features.mundane
 
-import com.infinitekind.moneydance.model.*
+import com.infinitekind.moneydance.model.Account
+import com.infinitekind.moneydance.model.AccountBook
+import com.infinitekind.moneydance.model.AccountBookListener
+import com.infinitekind.moneydance.model.AccountListener
+import com.infinitekind.moneydance.model.MDFileListener
 import com.moneydance.apps.md.controller.FeatureModule
 import com.moneydance.modules.features.mundane.jsonExport.JsonExportGsonSubFeature
 import com.moneydance.modules.features.mundane.subfeature.MDSubFeatureContext
-import com.moneydance.modules.features.mundane.subfeature.UninitializedSubFeatureContext
 import com.moneydance.modules.features.mundane.subfeature.SubFeature
 import com.moneydance.modules.features.mundane.subfeature.SubFeatureContext
 import github.adeynack.kotlin.extensions.q
@@ -17,8 +20,6 @@ class Main : FeatureModule() {
     private val features = listOf(
         JsonExportGsonSubFeature()
     ).toMap { it.name }
-
-//    private var context: SubFeatureContext = UninitializedSubFeatureContext()
 
     private val context: SubFeatureContext by lazy {
         MDSubFeatureContext(super.getContext(), this)
@@ -50,7 +51,7 @@ class Main : FeatureModule() {
         context.info("⦿ $source ! $eventName$i")
 
         // If after an event the base context differs from the one currently used, log it (this is vital to know!)
-        if (context.baseContext !== super.getContext()) {
+        if (!context.isBasedOn(super.getContext())) {
             context.error("---------========= BASE CONTEXT CHANGED =========---------")
         }
     }
@@ -61,24 +62,12 @@ class Main : FeatureModule() {
             when (appEvent) {
 
                 "md:account:root" -> {
+                    context.info("Adding account book listeners.")
                     val book = context.currentAccountBook
                     book.addListener(accountBookListener)
                     book.addAccountListener(accountListener)
                     book.addFileListener(fileListener)
                 }
-
-//                "md:file:opening" -> {
-//                    when (context) {
-//                        is MDSubFeatureContext -> {
-//                            context.info("Context is already initialized.")
-//                        }
-//                        is UninitializedSubFeatureContext -> {
-//                            // Initialize the context with the new file
-//                            context = MDSubFeatureContext(super.getContext(), this)
-//                            context.info("File is opening. Initialized sub-feature context.")
-//                        }
-//                    }
-//                }
 
                 "md:file:opened" -> {
                     // Call the `initialize` of every feature.
@@ -96,12 +85,11 @@ class Main : FeatureModule() {
                 }
 
                 "md:file:closing" -> {
-                    context.info("File is closing. Un-initializing sub-feature context.")
+                    context.info("Removing account book listeners.")
                     val book = context.currentAccountBook
                     book.removeListener(accountBookListener)
                     book.removeAccountListener(accountListener)
                     book.removeFileListener(fileListener)
-//                    context = UninitializedSubFeatureContext()
                 }
 
             }

@@ -1,32 +1,50 @@
 package com.moneydance.modules.features.mundane.subfeature
 
-import com.infinitekind.moneydance.model.Account
-import com.infinitekind.moneydance.model.AccountBook
 import com.moneydance.apps.md.controller.FeatureModule
 import com.moneydance.apps.md.controller.FeatureModuleContext
 import com.moneydance.apps.md.controller.Main
-import com.moneydance.apps.md.extensionapi.AccountEditor
-import com.moneydance.apps.md.view.HomePageView
 import com.moneydance.apps.md.view.gui.MoneydanceGUI
 import github.adeynack.kotlin.extensions.asA
-import java.awt.Image
 
 interface SubFeatureContext : FeatureModuleContext, Logger {
 
-    val baseContext: FeatureModuleContext?
+    /**
+     * Checks if the current [SubFeatureContext] is using [context] as its base.
+     */
+    fun isBasedOn(context: FeatureModuleContext?): Boolean
 
+    /**
+     * Adds a [Logger] object to which every calls to the [Logger] methods on this [SubFeatureContext] will be routed.
+     */
     fun addLogger(logger: Logger)
 
+    /**
+     * Generates a new [Storage] object.
+     *
+     * @param subKey identifies the [Storage] in the system (has to be unique for every [Storage], usually the name of
+     * the [com.moneydance.modules.features.mundane.subfeature.SubFeature].
+     *
+     * @param default a function providing the default value of the object to store. This is used when no value already
+     * exist for that storage.
+     */
     fun <T> getStorage(subKey: String, default: () -> T): Storage<T>
 
+    /**
+     * Gets the [MoneydanceGUI] that some UI components of Moneydance need to be created.
+     */
     val mdGUI: MoneydanceGUI
 
+    /**
+     * Registers a [SubFeature] to Moneydance.
+     *
+     * @see [FeatureModuleContext.registerFeature]
+     */
     fun registerFeature(subFeature: SubFeature)
 
 }
 
 class MDSubFeatureContext(
-    override val baseContext: FeatureModuleContext,
+    private val baseContext: FeatureModuleContext,
     private val mainFeatureModule: FeatureModule
 ) : SubFeatureContext,
     FeatureModuleContext by baseContext {
@@ -57,6 +75,10 @@ class MDSubFeatureContext(
     // Other
     //
 
+    override fun isBasedOn(context: FeatureModuleContext?): Boolean {
+        return baseContext === context
+    }
+
     override val mdGUI: MoneydanceGUI
         get() = baseContext.asA<Main>().ui.asA<MoneydanceGUI>()
 
@@ -66,48 +88,6 @@ class MDSubFeatureContext(
             subFeature.key,
             subFeature.image ?: mainFeatureModule.iconImage,
             subFeature.name)
-    }
-
-}
-
-class UninitializedSubFeatureContext : SubFeatureContext {
-
-    private val logger = SystemErrLogger()
-    private val uninitialisedMessage = "Context is being used before it is initialized."
-
-    override val baseContext: FeatureModuleContext? = null
-
-    override fun addLogger(logger: Logger) = throw IllegalStateException(uninitialisedMessage)
-
-    override fun <T> getStorage(subKey: String, default: () -> T): Storage<T> = throw IllegalStateException(uninitialisedMessage)
-
-    override val mdGUI: MoneydanceGUI
-        get() = throw IllegalStateException(uninitialisedMessage)
-
-    override fun registerFeature(subFeature: SubFeature) = throw IllegalStateException(uninitialisedMessage)
-
-    override fun registerFeature(p0: FeatureModule?, p1: String?, p2: Image?, p3: String?) = throw IllegalStateException(uninitialisedMessage)
-
-    override fun getRootAccount(): Account = throw IllegalStateException(uninitialisedMessage)
-
-    override fun showURL(p0: String?) = throw IllegalStateException(uninitialisedMessage)
-
-    override fun getVersion(): String = throw IllegalStateException(uninitialisedMessage)
-
-    override fun registerHomePageView(p0: FeatureModule?, p1: HomePageView?) = throw IllegalStateException(uninitialisedMessage)
-
-    override fun registerAccountEditor(p0: FeatureModule?, p1: Int, p2: AccountEditor?) = throw IllegalStateException(uninitialisedMessage)
-
-    override fun getCurrentAccountBook(): AccountBook = throw IllegalStateException(uninitialisedMessage)
-
-    override fun getBuild(): Int = throw IllegalStateException(uninitialisedMessage)
-
-    override fun info(message: String) {
-        logger.info("$message  << WARNING >> $uninitialisedMessage")
-    }
-
-    override fun error(message: String, error: Throwable?) {
-        logger.error("$message  << WARNING >> $uninitialisedMessage", error)
     }
 
 }
