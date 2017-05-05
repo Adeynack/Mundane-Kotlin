@@ -74,6 +74,7 @@ Add a Run/Debug Configuration of type `Application` with the following settings:
 - `Working directory`:
     - on Windows: `C:\Program Files\Moneydance\jars`
     - on Mac OS X: `/Applications/Moneydance.app/Contents/Java`
+- `Use classpath of module`: `{name of the project}_main`
 
 The first time, you need to:
 

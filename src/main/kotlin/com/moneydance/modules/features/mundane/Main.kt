@@ -3,6 +3,8 @@ package com.moneydance.modules.features.mundane
 import com.infinitekind.moneydance.model.*
 import com.moneydance.apps.md.controller.FeatureModule
 import com.moneydance.modules.features.mundane.jsonExport.JsonExportGsonSubFeature
+import com.moneydance.modules.features.mundane.subfeature.MDSubFeatureContext
+import com.moneydance.modules.features.mundane.subfeature.UninitializedSubFeatureContext
 import com.moneydance.modules.features.mundane.subfeature.SubFeature
 import com.moneydance.modules.features.mundane.subfeature.SubFeatureContext
 import github.adeynack.kotlin.extensions.q
@@ -13,14 +15,18 @@ import javax.swing.SwingUtilities
 class Main : FeatureModule() {
 
     private val features = listOf(
-            JsonExportGsonSubFeature()
+        JsonExportGsonSubFeature()
     ).toMap { it.name }
 
-    private lateinit var context: SubFeatureContext
+//    private var context: SubFeatureContext = UninitializedSubFeatureContext()
+
+    private val context: SubFeatureContext by lazy {
+        MDSubFeatureContext(super.getContext(), this)
+    }
 
     override fun init() {
         super.init()
-        context = SubFeatureContext(super.getContext(), this)
+        context.info("Feature module is initializing. Initialized sub-feature context.")
         features.values.forEach(context::registerFeature)
     }
 
@@ -39,77 +45,115 @@ class Main : FeatureModule() {
         super.cleanup()
     }
 
+    private fun logEvent(source: String, eventName: String?, information: String? = null) {
+        val i = information?.let { " --> $it" } ?: ""
+        context.info("⦿ $source ! $eventName$i")
+
+        // If after an event the base context differs from the one currently used, log it (this is vital to know!)
+        if (context.baseContext !== super.getContext()) {
+            context.error("---------========= BASE CONTEXT CHANGED =========---------")
+        }
+    }
+
     override fun handleEvent(appEvent: String?) {
-        when (appEvent) {
+        logEvent("App", appEvent)
+        try {
+            when (appEvent) {
 
-            "md:account:root" -> {
-                context.info("Main::handleEvent appEvent = $appEvent")
-                val book = context.currentAccountBook
-                book.addListener(accountBookListener)
-                book.addAccountListener(accountListener)
-                book.addFileListener(fileListener)
-            }
+                "md:account:root" -> {
+                    val book = context.currentAccountBook
+                    book.addListener(accountBookListener)
+                    book.addAccountListener(accountListener)
+                    book.addFileListener(fileListener)
+                }
 
-            "md:file:opened" -> {
-                // Call the `initialize` of every feature.
-                features.values.forEach { f ->
+//                "md:file:opening" -> {
+//                    when (context) {
+//                        is MDSubFeatureContext -> {
+//                            context.info("Context is already initialized.")
+//                        }
+//                        is UninitializedSubFeatureContext -> {
+//                            // Initialize the context with the new file
+//                            context = MDSubFeatureContext(super.getContext(), this)
+//                            context.info("File is opening. Initialized sub-feature context.")
+//                        }
+//                    }
+//                }
+
+                "md:file:opened" -> {
+                    // Call the `initialize` of every feature.
+                    features.values.forEach { f ->
+                        SwingUtilities.invokeLater {
+                            // todo: Does that really needs to be invoked later with Swing?
+                            f.initialize(context)
+                        }
+                    }
+                    // todo : Remove this (there for debugging reasons)
                     SwingUtilities.invokeLater {
-                        // todo: Does that really needs to be invoked later with Swing?
-                        f.initialize(context)
+                        context.info("Automatically invoking the ForceLabel sub feature.")
+                        invoke("Force Label")
                     }
                 }
-                // todo : Remove this (there for debugging reasons)
-                SwingUtilities.invokeLater {
-                    context.info("Automatically invoking the ForceLabel sub feature.")
-                    invoke("Force Label")
+
+                "md:file:closing" -> {
+                    context.info("File is closing. Un-initializing sub-feature context.")
+                    val book = context.currentAccountBook
+                    book.removeListener(accountBookListener)
+                    book.removeAccountListener(accountListener)
+                    book.removeFileListener(fileListener)
+//                    context = UninitializedSubFeatureContext()
                 }
-            }
 
-            else -> {
-                context.info("Main::handleEvent appEvent = $appEvent")
             }
-
+        } catch (e: Throwable) {
+            e.printStackTrace()
         }
+
         super.handleEvent(appEvent)
     }
 
     private val accountBookListener = object : AccountBookListener() {
 
+        private val source = "Account Book"
+
         override fun accountBookDataUpdated(accountBook: AccountBook?) {
-            context.info("AccountBookListener::accountBookDataUpdated accountBook = $accountBook")
+            logEvent(source, "Data Updated", "Book name = \"${accountBook?.name}\"")
         }
 
         override fun accountBookDataReplaced(accountBook: AccountBook?) {
-            context.info("AccountBookListener::accountBookDataReplaced accountBook = $accountBook")
+            logEvent(source, "Data Replaced", "Book name = \"${accountBook?.name}\"")
         }
 
     }
 
     private val accountListener = object : AccountListener {
 
+        private val source = "Account"
+
         override fun accountDeleted(a1: Account?, a2: Account?) {
-            context.info("AccountListener::accountDeleted account = $a1 account1 = $a2")
+            logEvent(source, "Delete", "Accounts \"${a1?.fullAccountName}\" and \"${a2?.fullAccountName}\"")
         }
 
         override fun accountBalanceChanged(a: Account?) {
-            context.info("AccountListener::accountBalanceChanged account = $a")
+            logEvent(source, "Balance Changed", "Account \"${a?.fullAccountName}\"")
         }
 
         override fun accountModified(a: Account?) {
-            context.info("AccountListener::accountModified account = $a")
+            logEvent(source, "Modified", "Account \"${a?.fullAccountName}\"")
         }
 
         override fun accountAdded(a1: Account?, a2: Account?) {
-            context.info("AccountListener::accountAdded account = $a1 account1 = $a2")
+            logEvent(source, "Added", "Accounts \"${a1?.fullAccountName}\" and \"${a2?.fullAccountName}\"")
         }
 
     }
 
-    @Suppress("ObjectLiteralToLambda")
     private val fileListener = object : MDFileListener {
 
+        private val source = "File"
+
         override fun dirtyStateChanged(a: Account?) {
-            context.info("MDFileListener::dirtyStateChanged account = $a")
+            logEvent(source, "Dirty State Changed", "Account \"${a?.fullAccountName}\"")
         }
 
     }

@@ -20,14 +20,11 @@ class JsonExportGsonSubFeature : SubFeature {
 
     data class GsonAccount(val name: String, val subAccounts: List<GsonAccount>) {
 
-        companion object {
+        constructor(a: Account) : this(
+                name = a.accountName,
+                subAccounts = a.subAccounts.map { GsonAccount(it) }
+        )
 
-            operator fun invoke(a: Account): GsonAccount = GsonAccount(
-                    a.accountName,
-                    a.subAccounts.map { GsonAccount(it) }
-            )
-
-        }
     }
 
 }

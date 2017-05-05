@@ -11,11 +11,11 @@ interface Logger {
 class SystemErrLogger : Logger {
 
     override fun info(message: String) {
-        System.err.println("[INFO] $message")
+        System.err.println("‣ [INFO] $message")
     }
 
     override fun error(message: String, error: Throwable?) {
-        System.err.println("[ERROR] $message")
+        System.err.println("✖︎ [ERROR] $message")
         error?.let { System.err.println(it.toString()) }
     }
 
