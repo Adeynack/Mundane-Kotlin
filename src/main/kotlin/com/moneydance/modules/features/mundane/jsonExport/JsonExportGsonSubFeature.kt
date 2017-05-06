@@ -21,8 +21,8 @@ class JsonExportGsonSubFeature : SubFeature {
     data class GsonAccount(val name: String, val subAccounts: List<GsonAccount>) {
 
         constructor(a: Account) : this(
-                name = a.accountName,
-                subAccounts = a.subAccounts.map { GsonAccount(it) }
+            name = a.accountName,
+            subAccounts = a.subAccounts.map { GsonAccount(it) }
         )
 
     }

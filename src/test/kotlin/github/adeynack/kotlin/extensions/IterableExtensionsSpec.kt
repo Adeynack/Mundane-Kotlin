@@ -19,8 +19,8 @@ object IterableExtensionsSpec : Spek({
 
             it("returns a Map with the proper extracted keys") {
                 models.toMap { it.k } shouldEqual mapOf(
-                        "one" to model1,
-                        "two" to model2
+                    "one" to model1,
+                    "two" to model2
                 )
             }
         }
@@ -29,8 +29,8 @@ object IterableExtensionsSpec : Spek({
 
             it("returns a Map with the proper extracted keys and values") {
                 models.toMap({ it.k }, { it.v }) shouldEqual mapOf(
-                        "one" to 1,
-                        "two" to 2
+                    "one" to 1,
+                    "two" to 2
                 )
             }
 

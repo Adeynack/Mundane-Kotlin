@@ -1,8 +1,5 @@
 package com.moneydance.modules.features.mundane.subfeature
 
-import com.infinitekind.moneydance.model.LocalStorage
-import com.moneydance.modules.features.mundane.subfeature.SubFeatureContext
-
 interface Storage<T> {
 
     fun set(value: T): Unit
@@ -14,9 +11,9 @@ interface Storage<T> {
 }
 
 class JsonLocalStorage<T>(
-        private val key: String,
-        private val default: () -> T,
-        private val context: SubFeatureContext
+    private val key: String,
+    private val default: () -> T,
+    private val context: SubFeatureContext
 ) : Storage<T> {
 
     private val localStorage = context.currentAccountBook.localStorage
