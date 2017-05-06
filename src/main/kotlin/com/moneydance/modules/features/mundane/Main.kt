@@ -23,12 +23,16 @@ class Main : FeatureModule() {
     ).toMap { it.key }
 
     private val context: SubFeatureContext by lazy {
-        MDSubFeatureContext(super.getContext(), this)
+        MDSubFeatureContext(super.getContext(), this).also {
+            it.info("Initialized sub-feature context.")
+        }
     }
 
     override fun init() {
         super.init()
-        context.info("Feature module is initializing. Initialized sub-feature context.")
+        context.info("=======================================================================================")
+        context.info("==                  Mundane Feature module is initializing.                          ==")
+        context.info("=======================================================================================")
         features.values.forEach(context::registerFeature)
     }
 
@@ -63,26 +67,25 @@ class Main : FeatureModule() {
         try {
             when (appEvent) {
 
-                AppEventManager.HOME_SELECTED -> {
+                AppEventManager.FILE_OPENED -> {
+
                     context.info("Adding account book listeners.")
                     val book = context.currentAccountBook
                     book.addListener(accountBookListener)
                     book.addAccountListener(accountListener)
                     book.addFileListener(fileListener)
-                }
 
-                AppEventManager.FILE_OPENED -> {
                     // Call the `initialize` of every feature.
                     features.values.forEach { f ->
-                        SwingUtilities.invokeLater {
-                            // todo: Does that really needs to be invoked later with Swing?
-                            f.initialize(context)
-                        }
+                        context.info("Initializing sub-feature \"${f.key}\".")
+                        f.initialize(context)
                     }
                     // todo : Remove this (there for debugging reasons)
-                    SwingUtilities.invokeLater {
-                        context.info("Automatically invoking the ForceLabel sub feature.")
-                        invoke("Force Label")
+                    features[JsonExportGsonSubFeature::class.java.simpleName]?.let {
+                        context.info("Automatically invoking the \"${it.key}\" sub feature.")
+                        SwingUtilities.invokeLater {
+                            invoke(it.key)
+                        }
                     }
                 }
 

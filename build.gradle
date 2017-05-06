@@ -50,7 +50,6 @@ dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile "com.miglayout:miglayout-swing:5.0"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.8.1"
 
     testCompile 'org.mockito:mockito-core:2.7.22'
     testCompile 'org.amshove.kluent:kluent:1.19'

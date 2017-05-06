@@ -1,9 +1,9 @@
 package com.moneydance.modules.features.mundane.jsonExport
 
-import com.google.gson.GsonBuilder
 import com.infinitekind.moneydance.model.Account
 import com.moneydance.modules.features.mundane.subfeature.SubFeature
 import com.moneydance.modules.features.mundane.subfeature.SubFeatureContext
+import com.moneydance.modules.features.mundane.subfeature.toJson
 
 class JsonExportGsonSubFeature : SubFeature {
 
@@ -11,11 +11,9 @@ class JsonExportGsonSubFeature : SubFeature {
         get() = "Output accounts as JSON (GSON)"
 
     override fun invoke(context: SubFeatureContext) {
-        val gsonBuilder = GsonBuilder()
-        val gson = gsonBuilder.setPrettyPrinting().create()
         val rootAccount = GsonAccount(context.rootAccount)
-        val json = gson.toJson(rootAccount)
-        println(json)
+        val json = context.toJson(rootAccount)
+        context.info("\n$json")
     }
 
     data class GsonAccount(val name: String, val subAccounts: List<GsonAccount>) {
