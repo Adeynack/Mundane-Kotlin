@@ -5,6 +5,7 @@ import com.infinitekind.moneydance.model.AccountBook
 import com.infinitekind.moneydance.model.AccountBookListener
 import com.infinitekind.moneydance.model.AccountListener
 import com.infinitekind.moneydance.model.MDFileListener
+import com.moneydance.apps.md.controller.AppEventManager
 import com.moneydance.apps.md.controller.FeatureModule
 import com.moneydance.modules.features.mundane.jsonExport.JsonExportGsonSubFeature
 import com.moneydance.modules.features.mundane.subfeature.MDSubFeatureContext
@@ -62,7 +63,7 @@ class Main : FeatureModule() {
         try {
             when (appEvent) {
 
-                "md:account:root" -> {
+                AppEventManager.HOME_SELECTED -> {
                     context.info("Adding account book listeners.")
                     val book = context.currentAccountBook
                     book.addListener(accountBookListener)
@@ -70,7 +71,7 @@ class Main : FeatureModule() {
                     book.addFileListener(fileListener)
                 }
 
-                "md:file:opened" -> {
+                AppEventManager.FILE_OPENED -> {
                     // Call the `initialize` of every feature.
                     features.values.forEach { f ->
                         SwingUtilities.invokeLater {
@@ -85,7 +86,7 @@ class Main : FeatureModule() {
                     }
                 }
 
-                "md:file:closing" -> {
+                AppEventManager.FILE_CLOSING -> {
                     context.info("Removing account book listeners.")
                     val book = context.currentAccountBook
                     book.removeListener(accountBookListener)
