@@ -10,16 +10,16 @@ import com.moneydance.modules.features.mundane.jsonExport.JsonExportGsonSubFeatu
 import com.moneydance.modules.features.mundane.subfeature.MDSubFeatureContext
 import com.moneydance.modules.features.mundane.subfeature.SubFeature
 import com.moneydance.modules.features.mundane.subfeature.SubFeatureContext
-import github.adeynack.kotlin.extensions.q
+import github.adeynack.kotlin.extensions.orElse
 import github.adeynack.kotlin.extensions.toMap
 import javax.swing.SwingUtilities
 
 @Suppress("unused") // used at runtime by Moneydance
 class Main : FeatureModule() {
 
-    private val features = listOf(
+    private val features: Map<String, SubFeature> = listOf(
         JsonExportGsonSubFeature()
-    ).toMap { it.name }
+    ).toMap { it.key }
 
     private val context: SubFeatureContext by lazy {
         MDSubFeatureContext(super.getContext(), this)
@@ -34,11 +34,12 @@ class Main : FeatureModule() {
     override fun getName(): String = "Mundane"
 
     override fun invoke(s: String?) {
-        features[s]?.invoke(context) ?: context.error(q("Invoked with ''$s'' which does not map to a known sub-feature"))
-//        features[s].let {
-//            if (it == null) context.error(q("Invoked with ''$s'' which does not map to a known sub-feature"))
-//            else it.invoke(context)
-//        }
+        features[s]?.let {
+            context.info("Invoking sub-feature \"${it.key}\".")
+            it.invoke(context)
+        } orElse {
+            context.error("Invoked with \"$s\" which does not map to a known sub-feature")
+        }
     }
 
     override fun cleanup() {
