@@ -1,5 +1,7 @@
 package com.moneydance.modules.features.mundane.subfeature
 
+import github.adeynack.kotlin.extensions.orElse
+
 interface Storage<T> {
 
     fun set(value: T): Unit
@@ -13,7 +15,8 @@ interface Storage<T> {
 class JsonLocalStorage<T>(
     private val key: String,
     private val default: () -> T,
-    private val context: SubFeatureContext
+    private val context: SubFeatureContext,
+    private val clazz: Class<T>
 ) : Storage<T> {
 
     private val localStorage = context.currentAccountBook.localStorage
@@ -21,7 +24,7 @@ class JsonLocalStorage<T>(
     private var cached: T? = null
 
     override fun set(value: T) {
-        val toJson = "" // todo: Transform `value` into JSON
+        val toJson = context.toJson(value)
         context.info("Saving to local storage with key \"$key\" and value $toJson")
         localStorage.put(key, toJson)
         cached = value
@@ -39,17 +42,20 @@ class JsonLocalStorage<T>(
 
     private fun getFromStorage(): T {
         val storageValue = localStorage.getString(key, null)?.let { content ->
-            val jsonDeserializationSuccess = true // todo: Parse `content` as JSON and deserialize to `T`
-            if (jsonDeserializationSuccess) {
-                val deserializedContent = default()
-                context.info("Loaded local storage from key \"$key\" Read value: $deserializedContent")
-                deserializedContent
-            } else {
+            try {
+                val value = context.fromJson(content, clazz)
+                context.info("Loaded from local storage from key \"$key\" Read value: $content")
+                value
+            } catch (t: Throwable) {
                 val d = default()
-                context.info("Failed to parse settings from local storage under key \"$key\" with value $content")
+                context.error("Failed to parse value from local storage under key \"$key\" with value $content. Using default ${context.toJson(d)}", t)
                 d
             }
-        } ?: default()
+        } orElse {
+            val d = default()
+            context.info("No storage with key \"key\" found. Using default ${context.toJson(d)}.")
+            d
+        }
         cached = storageValue
         return storageValue
     }

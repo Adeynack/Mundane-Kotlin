@@ -13,7 +13,6 @@ import com.moneydance.modules.features.mundane.subfeature.SubFeature
 import com.moneydance.modules.features.mundane.subfeature.SubFeatureContext
 import github.adeynack.kotlin.extensions.orElse
 import github.adeynack.kotlin.extensions.toMap
-import javax.swing.SwingUtilities
 
 @Suppress("unused") // used at runtime by Moneydance
 class Main : FeatureModule() {
@@ -80,13 +79,14 @@ class Main : FeatureModule() {
                         context.info("Initializing sub-feature \"${f.key}\".")
                         f.initialize(context)
                     }
-                    // todo : Remove this (there for debugging reasons)
-                    features[JsonExportGsonSubFeature::class.java.simpleName]?.let {
-                        context.info("Automatically invoking the \"${it.key}\" sub feature.")
-                        SwingUtilities.invokeLater {
-                            invoke(it.key)
-                        }
-                    }
+
+//                    // For development purposes, launching a specific sub-feature at startup.
+//                    features[JsonExportGsonSubFeature::class.java.simpleName]?.let {
+//                        context.info("Automatically invoking the \"${it.key}\" sub feature.")
+//                        SwingUtilities.invokeLater {
+//                            invoke(it.key)
+//                        }
+//                    }
                 }
 
                 AppEventManager.FILE_CLOSING -> {

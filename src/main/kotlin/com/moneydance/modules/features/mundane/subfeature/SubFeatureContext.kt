@@ -36,7 +36,7 @@ interface SubFeatureContext : FeatureModuleContext, Logger {
      * @param default a function providing the default value of the object to store. This is used when no value already
      * exist for that storage.
      */
-    fun <T> getStorage(subKey: String, default: () -> T): Storage<T>
+    fun <T> getStorage(subKey: String, default: () -> T, clazz: Class<T>): Storage<T>
 
     /**
      * Gets the [MoneydanceGUI] that some UI components of Moneydance need to be created.
@@ -56,7 +56,7 @@ interface SubFeatureContext : FeatureModuleContext, Logger {
      * @param T type of the object to deserialize.
      *
      * @param json the value as a JSON [String].
-     * @param valueType type (Java [Class] object]) of the object to serialize.
+     * @param clazz type (Java [Class] object]) of the object to serialize.
      *
      * @returns the deserialized value of type [T]. It will return `null` if the JSON value was `null` itself.
      *
@@ -64,7 +64,7 @@ interface SubFeatureContext : FeatureModuleContext, Logger {
      * or if the JSON [String] does not match the properties type [T]).
      *
      */
-    fun <T> fromJsonForType(json: String, valueType: Class<T>): T?
+    fun <T> fromJson(json: String, clazz: Class<T>): T?
 
     /**
      * Converts an object of type [T] to a JSON [String].
@@ -72,14 +72,13 @@ interface SubFeatureContext : FeatureModuleContext, Logger {
      * @param T type of the object to serialize.
      *
      * @param value the value as its concrete type [T].
-     * @param valueType type (Java [Class] object]) of the object to serialize.
      *
      * @return the serialized JSON [String] of the value.
      *
      * @throws Exception when the implementation fails to serialize the value.
      *
      */
-    fun <T> toJsonForType(value: T?, valueType: Class<T>): String
+    fun <T> toJson(value: T?): String
 
 }
 
@@ -89,11 +88,11 @@ interface SubFeatureContext : FeatureModuleContext, Logger {
 //
 
 inline fun <reified T> SubFeatureContext.fromJson(json: String): T? {
-    return fromJsonForType(json, T::class.java)
+    return fromJson(json, T::class.java)
 }
 
-inline fun <reified T> SubFeatureContext.toJson(value: T?): String {
-    return toJsonForType(value, T::class.java)
+inline fun <reified T> SubFeatureContext.getStorage(subKey: String, noinline default: () -> T): Storage<T> {
+    return this.getStorage(subKey, default, T::class.java)
 }
 
 /**
@@ -123,8 +122,8 @@ class MDSubFeatureContext(
     // Storage
     //
 
-    override fun <T> getStorage(subKey: String, default: () -> T): Storage<T> {
-        return JsonLocalStorage("Mundane:$subKey", default, this)
+    override fun <T> getStorage(subKey: String, default: () -> T, clazz: Class<T>): Storage<T> {
+        return JsonLocalStorage("Mundane:$subKey", default, this, clazz)
     }
 
     //
@@ -135,15 +134,15 @@ class MDSubFeatureContext(
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create()
 
-    override fun <T> fromJsonForType(json: String, valueType: Class<T>): T? {
-        return gson.fromJson(json, valueType)
+    override fun <T> fromJson(json: String, clazz: Class<T>): T? {
+        return gson.fromJson(json, clazz)
     }
 
-    override fun <T> toJsonForType(value: T?, valueType: Class<T>): String {
+    override fun <T> toJson(value: T?): String {
         return gson.toJson(value)
     }
 
-//
+    //
     // Other
     //
 
