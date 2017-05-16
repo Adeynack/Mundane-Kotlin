@@ -6,6 +6,7 @@ import com.moneydance.apps.md.controller.FeatureModule
 import com.moneydance.apps.md.controller.FeatureModuleContext
 import com.moneydance.apps.md.extensionapi.AccountEditor
 import com.moneydance.apps.md.view.HomePageView
+import github.adeynack.kotlin.testUtils.JsonKluent.shouldEqualJson
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -47,7 +48,15 @@ object SubFeatureContextSpec : Spek({
 
             it("must deserialize to data class from JSON string") {
                 val context = createContext()
-                val f = context.fromJson<Foo>("""{"bar":["abc","ijk","xyz"]}""")
+                val f = context.fromJson<Foo>("""
+                    {
+                      "bar": [
+                        "abc",
+                        "ijk",
+                        "xyz"
+                      ]
+                    }
+                    """)
                 f shouldEqual Foo(listOf("abc", "ijk", "xyz"))
             }
 
@@ -55,7 +64,15 @@ object SubFeatureContextSpec : Spek({
                 val context = createContext()
                 val f = Foo(listOf("abc", "ijk", "xyz"))
                 val s = context.toJson(f)
-                s shouldEqual """{"bar":["abc","ijk","xyz"]}"""
+                s shouldEqualJson """
+                    {
+                      "bar": [
+                        "abc",
+                        "ijk",
+                        "xyz"
+                      ]
+                    }
+                    """
             }
 
         }

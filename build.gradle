@@ -69,6 +69,9 @@ dependencies {
     testCompile('org.jetbrains.spek:spek-api:1.1.0') {
         exclude group: 'org.jetbrains.kotlin'
     }
+    testCompile 'org.skyscreamer:jsonassert:1.4.0'
+
+
     testRuntime('org.jetbrains.spek:spek-junit-platform-engine:1.1.0') {
         exclude group: 'org.junit.platform'
         exclude group: 'org.jetbrains.kotlin'
