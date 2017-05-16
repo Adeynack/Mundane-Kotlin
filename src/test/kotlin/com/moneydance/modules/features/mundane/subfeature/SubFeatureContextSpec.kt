@@ -47,7 +47,7 @@ object SubFeatureContextSpec : Spek({
 
             it("must deserialize to data class from JSON string") {
                 val context = createContext()
-                val f = context.fromJson<Foo>("{\"bar\":[\"abc\",\"ijk\",\"xyz\"]}")
+                val f = context.fromJson<Foo>("""{"bar":["abc","ijk","xyz"]}""")
                 f shouldEqual Foo(listOf("abc", "ijk", "xyz"))
             }
 
@@ -55,7 +55,7 @@ object SubFeatureContextSpec : Spek({
                 val context = createContext()
                 val f = Foo(listOf("abc", "ijk", "xyz"))
                 val s = context.toJson(f)
-                s shouldEqual "{\"bar\":[\"abc\",\"ijk\",\"xyz\"]}"
+                s shouldEqual """{"bar":["abc","ijk","xyz"]}"""
             }
 
         }

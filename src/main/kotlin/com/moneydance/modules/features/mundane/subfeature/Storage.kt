@@ -25,7 +25,7 @@ class JsonLocalStorage<T>(
 
     override fun set(value: T) {
         val toJson = context.toJson(value)
-        context.info("Saving to local storage with key \"$key\" and value $toJson")
+        context.info("""Saving to local storage with key "$key" and value $toJson""")
         localStorage.put(key, toJson)
         cached = value
     }
@@ -44,16 +44,16 @@ class JsonLocalStorage<T>(
         val storageValue = localStorage.getString(key, null)?.let { content ->
             try {
                 val value = context.fromJson(content, clazz)
-                context.info("Loaded from local storage from key \"$key\" Read value: $content")
+                context.info("""Loaded from local storage from key "$key" Read value: $content""")
                 value
             } catch (t: Throwable) {
                 val d = default()
-                context.error("Failed to parse value from local storage under key \"$key\" with value $content. Using default ${context.toJson(d)}", t)
+                context.error("""Failed to parse value from local storage under key "$key" with value $content. Using default ${context.toJson(d)}""", t)
                 d
             }
         } orElse {
             val d = default()
-            context.info("No storage with key \"key\" found. Using default ${context.toJson(d)}.")
+            context.info("""No storage with key "key" found. Using default ${context.toJson(d)}.""")
             d
         }
         cached = storageValue

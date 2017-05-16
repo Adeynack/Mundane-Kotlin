@@ -39,10 +39,10 @@ class Main : FeatureModule() {
 
     override fun invoke(s: String?) {
         features[s]?.let {
-            context.info("Invoking sub-feature \"${it.key}\".")
+            context.info("""Invoking sub-feature "${it.key}".""")
             it.invoke(context)
         } orElse {
-            context.error("Invoked with \"$s\" which does not map to a known sub-feature")
+            context.error("""Invoked with "$s" which does not map to a known sub-feature""")
         }
     }
 
@@ -76,13 +76,13 @@ class Main : FeatureModule() {
 
                     // Call the `initialize` of every feature.
                     features.values.forEach { f ->
-                        context.info("Initializing sub-feature \"${f.key}\".")
+                        context.info("""Initializing sub-feature "${f.key}".""")
                         f.initialize(context)
                     }
 
 //                    // For development purposes, launching a specific sub-feature at startup.
 //                    features[JsonExportGsonSubFeature::class.java.simpleName]?.let {
-//                        context.info("Automatically invoking the \"${it.key}\" sub feature.")
+//                        context.info("""Automatically invoking the "${it.key}" sub feature.""")
 //                        SwingUtilities.invokeLater {
 //                            invoke(it.key)
 //                        }
@@ -110,11 +110,11 @@ class Main : FeatureModule() {
         private val source = "Account Book"
 
         override fun accountBookDataUpdated(accountBook: AccountBook?) {
-            logEvent(source, "Data Updated", "Book name = \"${accountBook?.name}\"")
+            logEvent(source, "Data Updated", """Book name = "${accountBook?.name}"""")
         }
 
         override fun accountBookDataReplaced(accountBook: AccountBook?) {
-            logEvent(source, "Data Replaced", "Book name = \"${accountBook?.name}\"")
+            logEvent(source, "Data Replaced", """Book name = "${accountBook?.name}"""")
         }
 
     }
@@ -124,19 +124,19 @@ class Main : FeatureModule() {
         private val source = "Account"
 
         override fun accountDeleted(a1: Account?, a2: Account?) {
-            logEvent(source, "Delete", "Accounts \"${a1?.fullAccountName}\" and \"${a2?.fullAccountName}\"")
+            logEvent(source, "Delete", """Accounts "${a1?.fullAccountName}" and "${a2?.fullAccountName}"""")
         }
 
         override fun accountBalanceChanged(a: Account?) {
-            logEvent(source, "Balance Changed", "Account \"${a?.fullAccountName}\"")
+            logEvent(source, "Balance Changed", """Account "${a?.fullAccountName}"""")
         }
 
         override fun accountModified(a: Account?) {
-            logEvent(source, "Modified", "Account \"${a?.fullAccountName}\"")
+            logEvent(source, "Modified", """Account "${a?.fullAccountName}"""")
         }
 
         override fun accountAdded(a1: Account?, a2: Account?) {
-            logEvent(source, "Added", "Accounts \"${a1?.fullAccountName}\" and \"${a2?.fullAccountName}\"")
+            logEvent(source, "Added", """Accounts "${a1?.fullAccountName}" and "${a2?.fullAccountName}"""")
         }
 
     }
@@ -146,7 +146,7 @@ class Main : FeatureModule() {
         private val source = "File"
 
         override fun dirtyStateChanged(a: Account?) {
-            logEvent(source, "Dirty State Changed", "Account \"${a?.fullAccountName}\"")
+            logEvent(source, "Dirty State Changed", """Account "${a?.fullAccountName}"""")
         }
 
     }

@@ -154,7 +154,7 @@ class MDSubFeatureContext(
         get() = baseContext.asA<Main>().ui.asA<MoneydanceGUI>()
 
     override fun registerFeature(subFeature: SubFeature) {
-        info("Registering sub-feature \"${subFeature.key}\" (\"${subFeature.name}\")")
+        info("""Registering sub-feature "${subFeature.key}" ("${subFeature.name}")""")
         registerFeature(
             mainFeatureModule,
             subFeature.key,
