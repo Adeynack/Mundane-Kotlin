@@ -37,4 +37,41 @@ object IterableExtensionsSpec : Spek({
         }
     }
 
+    describe("filterByOneOf") {
+
+        it("should return the right result") {
+            (1..30).filterByOneOf(
+                { it % 2 == 0 }, // is a multiple of 2 or
+                { it % 3 == 0 }, // is a multiple of 3 or
+                { it % 5 == 0 } //  is a multiple of 5
+            ) shouldEqual listOf(
+                2, 3, 4, 5, 6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 22, 24, 25, 26, 27, 28, 30
+            )
+        }
+
+    }
+
+    describe("tabulate") {
+
+        val uglyDesignedObject = object {
+            private val list = listOf("a", "b", "c", "d", "e")
+            fun getItemCount(): Int = list.count()
+            fun getItemAt(i: Int) = list[i]
+        }
+
+        it("should return at iterator of the extracted elements") {
+            val i = uglyDesignedObject.getItemCount().tabulate(uglyDesignedObject::getItemAt)
+            i.toList() shouldEqual listOf("a", "b", "c", "d", "e")
+        }
+
+        it("should not iterate at all when the int it is called on is 0") {
+            0.tabulate(uglyDesignedObject::getItemAt).toList() shouldEqual emptyList<String>()
+        }
+
+        it("should not iterate at all when the int it is called on is negative") {
+            (-2).tabulate(uglyDesignedObject::getItemAt).toList() shouldEqual emptyList<String>()
+        }
+
+    }
+
 })

@@ -35,7 +35,7 @@ interface SubFeature {
      * Warm up the feature. This is called on application event `md:file:opened`.
      * eg: This is the time to check configuration and apply any automatic behaviour (automatically open a frame, start
      * a listener, etc.).
-
+     *
      * @param context the Moneydance context.
      */
     fun initialize(context: SubFeatureContext) {}

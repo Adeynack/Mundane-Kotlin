@@ -57,7 +57,7 @@ dependencies {
     //
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    compile "com.miglayout:miglayout-swing:5.0"
+    compile 'com.miglayout:miglayout-swing:5.0'
 
     //
     // For tests only

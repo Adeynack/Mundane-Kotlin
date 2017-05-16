@@ -82,11 +82,6 @@ interface SubFeatureContext : FeatureModuleContext, Logger {
 
 }
 
-//
-// Some extension functions to avoid passing the type object manually
-// todo: Find a way to use `inline fun <reified T>` with interfaces.
-//
-
 inline fun <reified T> SubFeatureContext.fromJson(json: String): T? {
     return fromJson(json, T::class.java)
 }

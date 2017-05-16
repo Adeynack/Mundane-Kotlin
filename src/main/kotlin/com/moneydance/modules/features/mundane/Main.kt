@@ -7,6 +7,7 @@ import com.infinitekind.moneydance.model.AccountListener
 import com.infinitekind.moneydance.model.MDFileListener
 import com.moneydance.apps.md.controller.AppEventManager
 import com.moneydance.apps.md.controller.FeatureModule
+import com.moneydance.modules.features.mundane.fullTextTransactionSearch.FullTextTransactionSearchFeature
 import com.moneydance.modules.features.mundane.jsonExport.JsonExportGsonSubFeature
 import com.moneydance.modules.features.mundane.subfeature.MDSubFeatureContext
 import com.moneydance.modules.features.mundane.subfeature.SubFeature
@@ -18,7 +19,8 @@ import github.adeynack.kotlin.extensions.toMap
 class Main : FeatureModule() {
 
     private val features: Map<String, SubFeature> = listOf(
-        JsonExportGsonSubFeature()
+        JsonExportGsonSubFeature,
+        FullTextTransactionSearchFeature
     ).toMap { it.key }
 
     private val context: SubFeatureContext by lazy {

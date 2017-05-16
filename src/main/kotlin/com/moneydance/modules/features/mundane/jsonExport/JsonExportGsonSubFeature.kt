@@ -5,7 +5,7 @@ import com.moneydance.modules.features.mundane.subfeature.SubFeature
 import com.moneydance.modules.features.mundane.subfeature.SubFeatureContext
 import com.moneydance.modules.features.mundane.subfeature.getStorage
 
-class JsonExportGsonSubFeature : SubFeature {
+object JsonExportGsonSubFeature : SubFeature {
 
     override val name: String
         get() = "Output accounts as JSON (GSON)"
