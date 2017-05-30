@@ -7,7 +7,6 @@ import com.moneydance.apps.md.controller.FeatureModule
 import com.moneydance.apps.md.controller.FeatureModuleContext
 import com.moneydance.apps.md.controller.Main
 import com.moneydance.apps.md.view.gui.MoneydanceGUI
-import github.adeynack.kotlin.extensions.asA
 
 /**
  * The business logic and technical context of a sub-feature.
@@ -129,24 +128,19 @@ class MDSubFeatureContext(
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create()
 
-    override fun <T> fromJson(json: String, clazz: Class<T>): T? {
-        return gson.fromJson(json, clazz)
-    }
+    override fun <T> fromJson(json: String, clazz: Class<T>): T? = gson.fromJson(json, clazz)
 
-    override fun <T> toJson(value: T?): String {
-        return gson.toJson(value)
-    }
+    override fun <T> toJson(value: T?): String = gson.toJson(value)
 
     //
     // Other
     //
 
-    override fun isBasedOn(context: FeatureModuleContext?): Boolean {
-        return baseContext === context
-    }
+    override fun isBasedOn(context: FeatureModuleContext?): Boolean = baseContext === context
 
-    override val mdGUI: MoneydanceGUI
-        get() = baseContext.asA<Main>().ui.asA<MoneydanceGUI>()
+    override val mdGUI: MoneydanceGUI by lazy {
+        baseContext.let { it as Main }.ui.let { it as MoneydanceGUI }
+    }
 
     override fun registerFeature(subFeature: SubFeature) {
         info("""Registering sub-feature "${subFeature.key}" ("${subFeature.name}")""")

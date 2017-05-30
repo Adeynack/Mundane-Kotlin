@@ -28,9 +28,11 @@ targetCompatibility = 1.8
 
 // Get the installed Moneydance's classpath from the MONEYDANCE_CLASSPATH environment variable or
 // default to the Mac default installed path if the environment variable does not exist.
-String moneydanceInstalled = System.getenv()["MONEYDANCE_CLASSPATH"]
+def ENV_MONEYDANCE_CLASSPATH = "MONEYDANCE_CLASSPATH"
+String moneydanceInstalled = System.getenv()[ENV_MONEYDANCE_CLASSPATH]
 if (moneydanceInstalled == null || moneydanceInstalled.length() == 0) {
     moneydanceInstalled = "/Applications/Moneydance.app/Contents/Java"
+    println "Environment variable $ENV_MONEYDANCE_CLASSPATH not found. Defaulting to $moneydanceInstalled"
 }
 
 repositories {

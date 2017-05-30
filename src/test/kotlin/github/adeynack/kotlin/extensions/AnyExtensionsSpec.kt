@@ -8,16 +8,6 @@ import org.jetbrains.spek.api.dsl.it
 
 object AnyExtensionsSpec : Spek({
 
-    describe("asA") {
-
-        it("should convert interface to concrete type") {
-            val f: Foo = Bar()
-            f.a() shouldEqual "asd"
-            f.asA<Bar>().b() shouldEqual 42
-        }
-
-    }
-
     describe("orElse") {
 
         fun getValue(i: Int): String? =
@@ -115,15 +105,4 @@ object AnyExtensionsSpec : Spek({
 
     }
 
-}) {
-
-    interface Foo {
-        fun a(): String
-    }
-
-    class Bar : Foo {
-        override fun a(): String = "asd"
-        fun b(): Int = 42
-    }
-
-}
+})
