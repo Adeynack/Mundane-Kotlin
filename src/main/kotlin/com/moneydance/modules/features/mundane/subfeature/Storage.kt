@@ -1,6 +1,6 @@
 package com.moneydance.modules.features.mundane.subfeature
 
-import github.adeynack.kotlin.extensions.orElse
+import com.github.adeynack.kotti.orElse
 
 interface Storage<T> {
 

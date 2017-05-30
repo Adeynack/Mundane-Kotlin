@@ -23,6 +23,17 @@ system. If you are on macOS and have installed Moneydance normally (in the `/App
 to set the environment variable since its default is that folder (see `build.gradle`, where variable 
 `moneydanceInstalled` is set, for details).
 
+### Kotti
+
+In order to compile the extension, the [_Kotti_](https://github.com/adeynack/kotti) source code must at the root of the
+project, under a directory `kotti`.
+
+    git clone git@github.com:Adeynack/kotti.git kotti
+    
+If you have that project already cloned somewhere else, you can simply create a symbolic link towards it.
+
+    ln -s ~/src/com/github/adeynack/kotti ./kotti
+
 ### Generate keys
 
 _Moneydance_ needs the final extension file to be signed (`.jar` becomes `.mxt`). To do so, it needs two key files. To
