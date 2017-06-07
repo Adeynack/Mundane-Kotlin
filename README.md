@@ -25,14 +25,12 @@ to set the environment variable since its default is that folder (see `build.gra
 
 ### Kotti
 
-In order to compile the extension, the [_Kotti_](https://github.com/adeynack/kotti) source code must at the root of the
-project, under a directory `kotti`.
+In order to compile the extension, the [_Kotti_](https://github.com/adeynack/kotti) artifacts must be published to local
+_Maven_. To do that, clone the _Kotti_ repository somewhere on your local machine. Then, publish all artifacts locally.
 
     git clone git@github.com:Adeynack/kotti.git kotti
-    
-If you have that project already cloned somewhere else, you can simply create a symbolic link towards it.
-
-    ln -s ~/src/com/github/adeynack/kotti ./kotti
+    cd kotti
+    ./gradlew publishToMavenLocal
 
 ### Generate keys
 
