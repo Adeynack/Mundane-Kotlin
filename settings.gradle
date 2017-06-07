@@ -1,5 +1,1 @@
 rootProject.name = 'mundane'
-
-include 'kotti:kotti-core'
-include 'kotti:kotti-swing'
-include 'kotti:kotti-tests'

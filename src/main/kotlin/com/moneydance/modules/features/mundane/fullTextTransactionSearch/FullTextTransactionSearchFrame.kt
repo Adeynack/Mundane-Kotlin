@@ -1,6 +1,6 @@
 package com.moneydance.modules.features.mundane.fullTextTransactionSearch
 
-import com.github.adeynack.kotti.filterByOneOf
+import com.github.adeynack.kotti.collections.filterByOneOf
 import com.infinitekind.moneydance.model.ParentTxn
 import com.infinitekind.util.DateUtil
 import com.moneydance.awt.AwtUtil

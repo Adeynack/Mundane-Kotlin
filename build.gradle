@@ -36,6 +36,7 @@ if (moneydanceInstalled == null || moneydanceInstalled.length() == 0) {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
     maven { url "http://dl.bintray.com/jetbrains/spek" }
@@ -47,6 +48,8 @@ configurations {
 
 dependencies {
 
+    def kotti_version = '0.1-SNAPSHOT'
+
     //
     // Moneydance itself with the business and technical model. Provided at runtime, so `compileOnly`. Duplicate
     // declaration for `testCompile` otherwise the Moneydance model is not visible by the tests.
@@ -54,21 +57,20 @@ dependencies {
     compileOnly fileTree(dir: moneydanceInstalled, include: '*.jar')
     testCompile fileTree(dir: moneydanceInstalled, include: '*.jar')
 
-    compile project('kotti:kotti-core')
-    compile project('kotti:kotti-swing')
-
     //
     // Packaged with the extension
     //
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile 'com.miglayout:miglayout-swing:5.0'
+    compile "com.github.adeynack:kotti-core:$kotti_version"
+    compile "com.github.adeynack:kotti-swing:$kotti_version"
 
     //
     // For tests only
     //
 
-    testCompile project('kotti:kotti-tests')
+    testCompile "com.github.adeynack:kotti-tests:$kotti_version"
     testCompile 'org.mockito:mockito-core:2.7.22'
     testCompile 'org.amshove.kluent:kluent:1.19'
     testCompile "org.junit.platform:junit-platform-console:1.0.0-M3"
@@ -92,7 +94,12 @@ dependencies {
     // Used only by Gradle for generating keys and signing the extension (JAR to MXT)
     compileOnly fileTree(dir: "moneydance-devkit-4.0/lib", include: 'extadmin.jar')
 
+}
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 junitPlatform {

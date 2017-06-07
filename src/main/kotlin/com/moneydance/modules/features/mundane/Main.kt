@@ -1,7 +1,7 @@
 package com.moneydance.modules.features.mundane
 
+import com.github.adeynack.kotti.collections.toMap
 import com.github.adeynack.kotti.orElse
-import com.github.adeynack.kotti.toMap
 import com.infinitekind.moneydance.model.Account
 import com.infinitekind.moneydance.model.AccountBook
 import com.infinitekind.moneydance.model.AccountBookListener
