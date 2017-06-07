@@ -1,12 +1,12 @@
 package com.moneydance.modules.features.mundane.subfeature
 
+import com.github.adeynack.kotti.tests.JsonKluent.shouldEqualJson
 import com.infinitekind.moneydance.model.Account
 import com.infinitekind.moneydance.model.AccountBook
 import com.moneydance.apps.md.controller.FeatureModule
 import com.moneydance.apps.md.controller.FeatureModuleContext
 import com.moneydance.apps.md.extensionapi.AccountEditor
 import com.moneydance.apps.md.view.HomePageView
-import github.adeynack.kotlin.testUtils.JsonKluent.shouldEqualJson
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe

@@ -1,8 +1,8 @@
-package github.adeynack.kotlin.testUtils
+package com.github.adeynack.kotti.tests
 
-import github.adeynack.kotlin.testUtils.JsonKluent.shouldContainJson
-import github.adeynack.kotlin.testUtils.JsonKluent.shouldContainJsonLenientArrays
-import github.adeynack.kotlin.testUtils.JsonKluent.shouldEqualJson
+import com.github.adeynack.kotti.tests.JsonKluent.shouldContainJson
+import com.github.adeynack.kotti.tests.JsonKluent.shouldContainJsonLenientArrays
+import com.github.adeynack.kotti.tests.JsonKluent.shouldEqualJson
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe

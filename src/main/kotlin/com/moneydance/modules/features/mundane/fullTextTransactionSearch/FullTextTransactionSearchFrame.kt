@@ -1,15 +1,15 @@
 package com.moneydance.modules.features.mundane.fullTextTransactionSearch
 
 import com.github.adeynack.kotti.collections.filterByOneOf
+import com.github.adeynack.kotti.swing.FlowPanel
+import com.github.adeynack.kotti.swing.SimpleAction
+import com.github.adeynack.kotti.swing.x
 import com.infinitekind.moneydance.model.ParentTxn
 import com.infinitekind.util.DateUtil
 import com.moneydance.awt.AwtUtil
 import com.moneydance.modules.features.mundane.splits
 import com.moneydance.modules.features.mundane.subfeature.Storage
 import com.moneydance.modules.features.mundane.subfeature.SubFeatureContext
-import github.adeynack.kotlin.swing.FlowPanel
-import github.adeynack.kotlin.swing.SimpleAction
-import github.adeynack.kotlin.swing.x
 import net.miginfocom.layout.AC
 import net.miginfocom.layout.CC
 import net.miginfocom.layout.LC

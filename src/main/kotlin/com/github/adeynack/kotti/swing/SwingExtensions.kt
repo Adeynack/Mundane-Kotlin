@@ -1,7 +1,4 @@
-@file:JvmName("SwingExtensionsKt")
-@file:JvmMultifileClass
-
-package github.adeynack.kotlin.swing
+package com.github.adeynack.kotti.swing
 
 import java.awt.Dimension
 
